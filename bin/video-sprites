@@ -7,9 +7,9 @@ require 'pry'
 opts = Slop.new strict: true do
   banner 'Usage: video-sprites [options]'
 
-  on 'f', 'frames=', 'An optional password', argument: :optional
-  on 'w', 'width=', 'Width of each thumbnail', argument: :optional
-  on 'c', 'columns=', 'Number of columns in the image sprite', argument: :optional
+  on 'f', 'frames=', 'An optional password', argument: :optional, as: Integer, default: 5
+  on 'w', 'width=', 'Width of each thumbnail', argument: :optional, as: Integer, default: 200
+  on 'c', 'columns=', 'Number of columns in the image sprite', argument: :optional, as: Integer, default: 4
   on 'k', 'keep', 'Keep all the individual images and other intermediate artifacts.', argument: :optional
   on 'i', 'input=', 'Input file or directory', required: true
   on 'o', 'output=', 'Output file or directory', argument: :optional
