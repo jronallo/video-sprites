@@ -5,16 +5,17 @@ require 'fileutils'
 require 'pry'
 
 opts = Slop.new strict: true do
-  banner 'Usage: video-sprites [options]'
+banner 'Usage: video-sprites [options]'
 
-  on 'f', 'frames=', 'An optional password', argument: :optional, as: Integer, default: 5
-  on 'w', 'width=', 'Width of each thumbnail', argument: :optional, as: Integer, default: 200
-  on 'c', 'columns=', 'Number of columns in the image sprite', argument: :optional, as: Integer, default: 5
-  on 'k', 'keep', 'Keep all the individual images and other intermediate artifacts.', argument: :optional
-  on 'i', 'input=', 'Input file or directory', required: true
-  on 'o', 'output=', 'Output file or directory', argument: :optional
-  on 'v', 'verbose', 'Enable verbose mode'
-  on 'h', 'help', 'Help!!!'
+on 'f', 'frames=', 'An optional password', argument: :optional, as: Integer, default: 5
+on 'w', 'width=', 'Width of each thumbnail', argument: :optional, as: Integer, default: 200
+on 'c', 'columns=', 'Number of columns in the image sprite', argument: :optional, as: Integer, default: 5
+on 'k', 'keep', 'Keep all the individual images and other intermediate artifacts.', argument: :optional
+on 'i', 'input=', 'Input file or directory', required: true
+on 'o', 'output=', 'Output file or directory', argument: :optional
+on 'v', 'verbose', 'Enable verbose mode'
+on 'z', 'clean', 'Clean up the output directory'
+on 'h', 'help', 'Help!!!'
 end
 
 def timestamp(total_seconds)
@@ -34,10 +35,15 @@ rescue Slop::Error => e
 end
 
 verbose = opts[:verbose]
-input = File.expand_path(opts[:input])
+input   = File.expand_path(opts[:input])
+output  = opts[:output]
+frames  = opts[:frames]
+columns = opts[:columns]
+width   = opts[:width]
+clean   = opts[:clean]
 
 unless File.exist?(input)
-  puts "File or directory does not exist!"
+  puts 'File or directory does not exist!'
   exit
 end
 
@@ -51,16 +57,25 @@ else
   files = [input]
 end
 
-if opts[:output]
-  output_directory = File.expand_path(opts[:output])
+
+if output
+  output_directory = File.expand_path(output)
+  puts "output dir is #{output_directory}" if verbose
+  if File.directory?(output_directory)
+    remove_files(output_directory, verbose) if clean
+  else
+    raise "Output directory must be a directory, was: #{output}"
+  end
 else
-    if File.directory?(input)
-      output_directory = input
-      puts "output dir is #{output_directory}" if verbose
-    else
-      output_directory = File.dirname(input)
-      puts "output dir is #{output_directory}" if verbose
-    end
+  output_directory = input
+  if File.directory?(output_directory)
+    puts "output dir is #{output_directory}" if verbose
+    remove_files(output_directory, verbose) if clean
+  else
+    output_directory = File.dirname(input)
+    puts "output dir is #{output_directory}" if verbose
+    remove_files(output_directory, verbose) if clean
+  end
 end
 
 files.each do | file |
@@ -78,11 +93,11 @@ files.each do | file |
 
   # FIXME: check if the files exist already and maybe don't process anything
 
-  ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -f image2 -vf fps=fps=1/#{opts[:frames]} "#{output_file_path}-%05d.jpg"|
+  ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -f image2 -vf fps=fps=1/#{frames} "#{output_path}-%05d.jpg"|
   puts ffmpeg_cmd if verbose
   `#{ffmpeg_cmd}`
 
-  montage_cmd = %Q|montage #{output_path}*jpg -tile #{opts[:columns]}x -geometry #{opts[:width]}x #{output_file_path}-sprite.jpg|
+  montage_cmd = %Q|montage #{output_path}*jpg -tile #{columns}x -geometry #{width}x #{output_path}-sprite.jpg|
   puts montage_cmd if verbose
 
   `#{montage_cmd}`
@@ -90,7 +105,7 @@ files.each do | file |
   # Create WebVTT file
   jpegs = Dir.glob(File.join(output_path, '*.jpg'))
   if verbose
-    puts "Processing a WebVTT file from these images:"
+    puts 'Processing a WebVTT file from these images:'
     puts jpegs
   end
   # place all the cues into an array of hashes like this:
@@ -148,3 +163,11 @@ files.each do | file |
 
 end
 
+def remove_files(output_directory, verbose)
+  deadfiles = Dir.glob(File.join(output_directory, '*.jpg'))
+  puts "list of dead files will be #{deadfiles}" if verbose
+  deadfiles.each do | deadfile |
+    puts "removing file #{deadfile}" if verbose
+    File.unlink(deadfile)
+  end
+end
