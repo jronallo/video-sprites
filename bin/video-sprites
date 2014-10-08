@@ -62,7 +62,7 @@ files.each do | file |
     output_path = File.join(output_directory, basename, basename)
   end
 
-  `ffmpeg -i "#{file}" -f image2 -vf fps=fps=1/#{frames} "#{output_path}-%05d.jpg"`
+  `ffmpeg -i "#{file}" -f image2 -vf fps=fps=1/#{opts[:frames]} "#{output_path}-%05d.jpg"`
 
 end
 
