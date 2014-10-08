@@ -1,6 +1,6 @@
 # Video::Sprites
 
-Automatically generated thumbnail for video files.
+Exports thumbnail images, thumbnail sprite image, and WebVTT metadata. ffmpeg and ImageMagick are required.
 
 ## Installation
 
