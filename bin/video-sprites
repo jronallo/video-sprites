@@ -46,7 +46,13 @@ end
 if opts[:output]
   output_directory = File.expand_path(opts[:output])
 else
-  output_directory = Dir.pwd
+    if File.directory?(input)
+      output_directory = input
+      puts "output dir is #{output_directory}" if verbose
+    else
+      output_directory = File.dirname(input)
+      puts "output dir is #{output_directory}" if verbose
+    end
 end
 
 files.each do | file |
