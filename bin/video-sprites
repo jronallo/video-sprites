@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+require 'slop'
+require 'pry'
+
+opts = Slop.new strict: true do
+  banner 'Usage: video-sprites [options]'
+
+  on 'f', 'frames', 'An optional password', argument: :optional
+  on 'w', 'width', 'Width of each thumbnail', argument: :optional
+  on 'c', 'columns', 'Number of columns in the image sprite', argument: :optional
+  on 'k', 'keep', 'Keep all the individual images and other intermediate artifacts.', argument: :optional
+  on 'i', 'input', 'Input file or directory'
+  on 'o', 'output', 'Output file or directory', argument: :optional
+  on 'v', 'verbose', 'Enable verbose mode'
+  on 'h', 'help', 'Help!!!'
+end
+
+begin
+  opts.parse
+rescue Slop::Error => e
+  puts e.message
+  puts opts # print help
+end
