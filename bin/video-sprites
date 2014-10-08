@@ -17,6 +17,10 @@ opts = Slop.new strict: true do
   on 'h', 'help', 'Help!!!'
 end
 
+def timestamp(seconds)
+  seconds
+end
+
 
 begin
   opts.parse
@@ -95,6 +99,7 @@ files.each do | file |
   jpegs.each_with_index do |image, index|
     puts "Index: #{index}" if verbose
     cue = {}
+
     cue[:start] = start
     cue[:end] = start + opts[:frames]
 
@@ -116,6 +121,26 @@ files.each do | file |
   puts cues if verbose
 
   # media fragment order: x,y,w,h
+  webvtt_file_name = File.join(output_path, basename + '.vtt')
+  puts "Creating WebVTT: #{webvtt_file_name}" if verbose
+  File.open(webvtt_file_name, 'w') do |fh|
+    fh.puts "WEBVTT\n\n"
+
+    cues.each do |cue|
+      puts cue if verbose
+      start_timestamp = timestamp(cue[:start])
+      end_timestamp = timestamp(cue[:end])
+      fh.print start_timestamp
+      fh.print ' --> '
+      fh.puts end_timestamp
+
+      url = File.join("http://example.com", basename + "sprite.jpg#xywh=#{cue[:x]},#{cue[:y]},#{cue[:w]},#{cue[:h]}")
+
+      fh.puts url
+      fh.puts
+    end
+
+  end
 
 end
 
