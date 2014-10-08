@@ -65,19 +65,26 @@ files.each do | file |
 
   if File.directory?(input)
     FileUtils.mkdir_p(output_path)
-    output_path = File.join(output_directory, basename, basename)
+    output_file_path = File.join(output_directory, basename, basename)
   end
 
   # FIXME: check if the files exist already and maybe don't process anything
 
-  ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -f image2 -vf fps=fps=1/#{opts[:frames]} "#{output_path}-%05d.jpg"|
+  ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -f image2 -vf fps=fps=1/#{opts[:frames]} "#{output_file_path}-%05d.jpg"|
   puts ffmpeg_cmd if verbose
   `#{ffmpeg_cmd}`
 
-  montage_cmd = %Q|montage #{output_path}*jpg -tile #{opts[:columns]}x -geometry #{opts[:width]}x #{output_path}-sprite.jpg|
+  montage_cmd = %Q|montage #{output_path}*jpg -tile #{opts[:columns]}x -geometry #{opts[:width]}x #{output_file_path}-sprite.jpg|
   puts montage_cmd if verbose
 
   `#{montage_cmd}`
+
+  # Create WebVTT file
+  jpegs = Dir.glob(File.join(output_path, '*.jpg'))
+  if verbose
+    puts "Processing a WebVTT file from these images:"
+    puts jpegs
+  end
 
 end
 
