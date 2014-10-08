@@ -91,12 +91,12 @@ files.each do | file |
 
   jpegs.each_with_index do |image, index|
     cue = {}
-    cue[:start] =
-    cue[:end] =
-    cue[:x] =
-    cue[:y] =
-    cue[:w] =
-    cue[:h] =
+    cue[:start] = nil
+    cue[:end] = nil
+    cue[:x] = nil
+    cue[:y] = nil
+    cue[:w] = nil
+    cue[:h] = nil
   end
 
   # media fragment order: x,y,w,h
