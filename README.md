@@ -56,3 +56,4 @@ https://www.youtube.com/watch?v=wz-eInv9f7g
 - Instead of creating one sprite, create multiple sprites and have them appropriately listed in the WebVTT file.
 - Allow for setting the base URL to use in the VTT file.
 - Consider adding an option to change the output filename.
+- Optionally allow for scene change detection and variable length cues. How difficult would this be?
