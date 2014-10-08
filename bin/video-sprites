@@ -17,8 +17,12 @@ opts = Slop.new strict: true do
   on 'h', 'help', 'Help!!!'
 end
 
-def timestamp(seconds)
-  seconds
+def timestamp(total_seconds)
+  seconds = total_seconds % 60
+  minutes = (total_seconds / 60) % 60
+  hours = total_seconds / (60 * 60)
+
+  format("%02d:%02d:%02d.000", hours, minutes, seconds)
 end
 
 
