@@ -36,4 +36,13 @@ if verbose
   puts "Input file: #{input}"
 end
 
-File.directory?()
+if File.directory?(input)
+  files = Dir.glob(File.join(input, '*'))
+else
+  files = [input]
+end
+
+files.each do | file |
+  puts "Processing file: #{file}" if verbose
+end
+
