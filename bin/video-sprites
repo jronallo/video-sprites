@@ -42,7 +42,25 @@ else
   files = [input]
 end
 
+if opts[:frames]
+  frames = opts[:frames]
+else
+  frames = 5
+end
+
+if opts[:output]
+  output_directory = File.expand_path(opts[:output])
+else
+  output_directory = Dir.pwd
+end
+
 files.each do | file |
   puts "Processing file: #{file}" if verbose
+  extension = File.extname(file)
+  basename =  File.basename(file, extension)
+  puts "Basename is: #{basename}" if verbose
+  output_path = File.join(output_directory, basename)
+  `ffmpeg -i "#{file}" -f image2 -vf fps=fps=1/#{frames} "#{output_path}-%05d.jpg"`
+
 end
 
