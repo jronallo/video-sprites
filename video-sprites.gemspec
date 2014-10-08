@@ -6,10 +6,10 @@ require 'video/sprites/version'
 Gem::Specification.new do |spec|
   spec.name          = "video-sprites"
   spec.version       = Video::Sprites::VERSION
-  spec.authors       = ["Jason Ronallo"]
-  spec.email         = ["jronallo@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.authors       = ["Ashley Blewer, Jay Brown, Jason Ronallo, Nick Zoss"]
+  spec.email         = ["ashley.blewer@gmail.com, jlb1504@gmail.com, jronallo@gmail.com, nickzoss@yahoo.com"]
+  spec.summary       = %q{Automatically generated thumbnail for video files.}
+  spec.description   = %q{Automatically generated thumbnail for video files.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
