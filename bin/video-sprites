@@ -89,6 +89,12 @@ else
 end
 
 files.each do | file |
+
+  # for repeated runs, skip any directories in this directory
+  if File.directory?(file)
+    next
+  end
+
   puts "Processing file: #{file}" if verbose
   extension = File.extname(file)
   basename =  File.basename(file, extension)
