@@ -5,7 +5,7 @@ require 'fileutils'
 require 'pry'
 
 def remove_files(output_directory, verbose)
-  deadfiles = Dir.glob(File.join(output_directory, '*.jpg'))
+  deadfiles = Dir.glob(File.join(output_directory, '**', '*.jpg'))
   puts "list of dead files will be #{deadfiles}" if verbose
   deadfiles.each do | deadfile |
     puts "removing file #{deadfile}" if verbose
@@ -106,15 +106,18 @@ files.each do | file |
   puts "#{output_file_path} output file path"
   # FIXME: check if the files exist already and maybe don't process anything
 
-  # ffprobe_cmd = 'ffprobe -i "' + "#{file}" +  '" 2>&1 | sed -n "s/.*, \(.*\) fp.*/\1/p"'
-  # puts ffprobe_cmd if verbose
-  # frames_per_sec=`#{ffprobe_cmd}`.to_i
-  # frames_value=frames_per_sec*frames
-  # puts "frames_per_sec #{frames_per_sec}, frames_value #{frames_value}" if verbose
+  ffprobe_cmd = 'ffprobe -i "' + "#{file}" +  '" 2>&1 | sed -n "s/.*, \(.*\) fp.*/\1/p"'
+  puts ffprobe_cmd if verbose
+  frames_per_sec=`#{ffprobe_cmd}`.to_f.ceil.to_i
+  frames_value=frames_per_sec*frames
+  puts "frames_per_sec #{frames_per_sec}, frames_value #{frames_value}" if verbose
 
-  ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -vf fps=fps=1/#{frames} "#{output_file_path}-%05d.jpg"|
+  ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -vf select='lt(mod(n\\,#{frames_value})\\,1),fps=1/#{frames}' "#{output_file_path}-%05d.jpg"|
   puts ffmpeg_cmd if verbose
   `#{ffmpeg_cmd}`
+
+  jpegs = Dir.glob(output_file_path + '*.jpg').sort
+  FileUtils.rm(jpegs.first)
 
   montage_cmd = %Q|montage "#{output_file_path}*jpg" -tile #{columns}x -geometry #{width}x "#{output_file_path}-sprite.jpg"|
   puts montage_cmd if verbose
@@ -122,7 +125,7 @@ files.each do | file |
   `#{montage_cmd}`
 
   # Create WebVTT file
-  jpegs = Dir.glob(output_file_path + '*.jpg')
+
   if verbose
     puts 'Processing a WebVTT file from these images:'
     puts jpegs
@@ -180,13 +183,4 @@ files.each do | file |
 
   end
 
-end
-
-def remove_files(output_directory, verbose)
-  deadfiles = Dir.glob(File.join(output_directory, '**', '*.jpg'))
-  puts "list of dead files will be #{deadfiles}" if verbose
-  deadfiles.each do | deadfile |
-    puts "removing file #{deadfile}" if verbose
-    File.unlink(deadfile)
-  end
 end
