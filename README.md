@@ -15,9 +15,13 @@ gem 'video-sprites'
 ### Options
 
 Interval: Optional. Time between the snapshots. (Default 5 seconds.)
+
 Width:  Optional. Width of the each thumbnail. (Default 200.)
+
 Columns: Number of columns in the sprite. (Default 5.)
+
 KeepGenerated: Keep all the individual images and other intermediate artifacts.
+
 Input: Input file or directory. (Default: Current working directory.)
 Output: Output directory. (Default: Current working directory with "output" directory.)
 
