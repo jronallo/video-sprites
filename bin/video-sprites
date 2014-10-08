@@ -15,17 +15,17 @@ end
 
 
 opts = Slop.new strict: true do
-banner 'Usage: video-sprites [options]'
+  banner 'Usage: video-sprites [options]'
 
-on 'f', 'frames=', 'An optional password', argument: :optional, as: Integer, default: 5
-on 'w', 'width=', 'Width of each thumbnail', argument: :optional, as: Integer, default: 200
-on 'c', 'columns=', 'Number of columns in the image sprite', argument: :optional, as: Integer, default: 5
-on 'k', 'keep', 'Keep all the individual images and other intermediate artifacts.', argument: :optional
-on 'i', 'input=', 'Input file or directory', required: true
-on 'o', 'output=', 'Output file or directory', argument: :optional
-on 'v', 'verbose', 'Enable verbose mode'
-on 'z', 'clean', 'Clean up the output directory'
-on 'h', 'help', 'Help!!!'
+  on 'f', 'frames=', 'An optional password', argument: :optional, as: Integer, default: 5
+  on 'w', 'width=', 'Width of each thumbnail', argument: :optional, as: Integer, default: 200
+  on 'c', 'columns=', 'Number of columns in the image sprite', argument: :optional, as: Integer, default: 5
+  on 'k', 'keep', 'Keep all the individual images and other intermediate artifacts.', argument: :optional
+  on 'i', 'input=', 'Input file or directory', required: true
+  on 'o', 'output=', 'Output file or directory', argument: :optional
+  on 'v', 'verbose', 'Enable verbose mode'
+  on 'z', 'clean', 'Clean up the output directory'
+  on 'h', 'help', 'Help!!!'
 end
 
 def timestamp(total_seconds)
@@ -99,16 +99,20 @@ files.each do | file |
   if File.directory?(input)
     FileUtils.mkdir_p(output_path)
     output_file_path = File.join(output_directory, basename, basename)
+  else
+    output_file_path = File.join(output_directory, basename)
   end
 
+  puts "#{output_file_path} output file path"
   # FIXME: check if the files exist already and maybe don't process anything
 
-  #ffprobe_cmd = %Q|ffprobe -i test/videos/FrameCounter30fps-30sec.mp4 2>&1 | sed -n "s/.*, \(.*\) fp.*/\1/p"|
-  #puts ffprobe_cmd if verbose
-  #frames_per_sec=`#{ffprobe_cmd}`.to_i
+  ffprobe_cmd = 'ffprobe -i "' + "#{file}" +  '" 2>&1 | sed -n "s/.*, \(.*\) fp.*/\1/p"'
+  puts ffprobe_cmd if verbose
+  frames_per_sec=`#{ffprobe_cmd}`.to_i
+  frames_value=frames_per_sec*frames
+  puts "frames_per_sec #{frames_per_sec}, frames_value #{frames_value}" if verbose
 
-
-  ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -f image2 -vf fps=fps=1/#{frames} "#{output_file_path}-%05d.jpg"|
+  ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -vf select='not(mod(n\\,#{frames_value}))' "#{output_file_path}-%05d.jpg"|
   puts ffmpeg_cmd if verbose
   `#{ffmpeg_cmd}`
 
