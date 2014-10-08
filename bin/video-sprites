@@ -17,6 +17,7 @@ opts = Slop.new strict: true do
   on 'h', 'help', 'Help!!!'
 end
 
+
 begin
   opts.parse
 rescue Slop::Error => e
