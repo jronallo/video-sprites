@@ -10,6 +10,11 @@ Add this line to your application's Gemfile:
 gem 'video-sprites'
 ```
 
+## Requirements
+
+- ffmpeg
+- imagemagick (montage)
+
 ## Usage
 
 ### Options

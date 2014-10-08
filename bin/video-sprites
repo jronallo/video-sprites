@@ -89,15 +89,31 @@ files.each do | file |
   # {start: 0, end: 5, x: 0, y: 0, w: 200, h: 150}
   cues = []
 
+  start = 0
+  first_jpeg = jpegs.first
+  height = `identify -format "%h" -ping #{first_jpeg}`.to_i
   jpegs.each_with_index do |image, index|
+    puts "Index: #{index}" if verbose
     cue = {}
-    cue[:start] = nil
-    cue[:end] = nil
-    cue[:x] = nil
-    cue[:y] = nil
-    cue[:w] = nil
-    cue[:h] = nil
+    cue[:start] = start
+    cue[:end] = start + opts[:frames]
+
+    cue[:x] = ((index % opts[:columns]) * opts[:width])
+    puts "x #{cue[:x]}" if verbose
+
+    cue[:y] = (index.to_f / opts[:columns].to_f).floor * height
+    puts "y #{cue[:y]}" if verbose
+
+    cue[:w] = opts[:width]
+    cue[:h] = height
+
+    start += opts[:frames]
+    puts if verbose
+
+    cues << cue
   end
+
+  puts cues if verbose
 
   # media fragment order: x,y,w,h
 
