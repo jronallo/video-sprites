@@ -106,13 +106,13 @@ files.each do | file |
   puts "#{output_file_path} output file path"
   # FIXME: check if the files exist already and maybe don't process anything
 
-  ffprobe_cmd = 'ffprobe -i "' + "#{file}" +  '" 2>&1 | sed -n "s/.*, \(.*\) fp.*/\1/p"'
-  puts ffprobe_cmd if verbose
-  frames_per_sec=`#{ffprobe_cmd}`.to_i
-  frames_value=frames_per_sec*frames
-  puts "frames_per_sec #{frames_per_sec}, frames_value #{frames_value}" if verbose
+  # ffprobe_cmd = 'ffprobe -i "' + "#{file}" +  '" 2>&1 | sed -n "s/.*, \(.*\) fp.*/\1/p"'
+  # puts ffprobe_cmd if verbose
+  # frames_per_sec=`#{ffprobe_cmd}`.to_i
+  # frames_value=frames_per_sec*frames
+  # puts "frames_per_sec #{frames_per_sec}, frames_value #{frames_value}" if verbose
 
-  ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -vf select='not(mod(n\\,#{frames_value}))' "#{output_file_path}-%05d.jpg"|
+  ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -vf fps=fps=1/#{frames} "#{output_file_path}-%05d.jpg"|
   puts ffmpeg_cmd if verbose
   `#{ffmpeg_cmd}`
 
@@ -122,7 +122,7 @@ files.each do | file |
   `#{montage_cmd}`
 
   # Create WebVTT file
-  jpegs = Dir.glob(File.join(output_path, '*.jpg'))
+  jpegs = Dir.glob(output_file_path + '*.jpg')
   if verbose
     puts 'Processing a WebVTT file from these images:'
     puts jpegs
@@ -159,7 +159,7 @@ files.each do | file |
   puts cues if verbose
 
   # media fragment order: x,y,w,h
-  webvtt_file_name = File.join(output_path, basename + '.vtt')
+  webvtt_file_name = output_file_path + '.vtt'
   puts "Creating WebVTT: #{webvtt_file_name}" if verbose
   File.open(webvtt_file_name, 'w') do |fh|
     fh.puts "WEBVTT\n\n"
