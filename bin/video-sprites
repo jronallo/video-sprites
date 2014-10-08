@@ -116,6 +116,8 @@ files.each do | file |
   puts ffmpeg_cmd if verbose
   `#{ffmpeg_cmd}`
 
+  jpegs = Dir.glob(output_file_path + '*.jpg').sort
+  FileUtils.rm(jpegs.first)
 
   montage_cmd = %Q|montage "#{output_file_path}*jpg" -tile #{columns}x -geometry #{width}x "#{output_file_path}-sprite.jpg"|
   puts montage_cmd if verbose
@@ -123,7 +125,7 @@ files.each do | file |
   `#{montage_cmd}`
 
   # Create WebVTT file
-  jpegs = Dir.glob(output_file_path + '*.jpg')
+
   if verbose
     puts 'Processing a WebVTT file from these images:'
     puts jpegs
