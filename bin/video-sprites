@@ -5,7 +5,7 @@ require 'fileutils'
 require 'pry'
 
 def remove_files(output_directory, verbose)
-  deadfiles = Dir.glob(File.join(output_directory, '*.jpg'))
+  deadfiles = Dir.glob(File.join(output_directory, '**', '*.jpg'))
   puts "list of dead files will be #{deadfiles}" if verbose
   deadfiles.each do | deadfile |
     puts "removing file #{deadfile}" if verbose
@@ -181,13 +181,4 @@ files.each do | file |
 
   end
 
-end
-
-def remove_files(output_directory, verbose)
-  deadfiles = Dir.glob(File.join(output_directory, '**', '*.jpg'))
-  puts "list of dead files will be #{deadfiles}" if verbose
-  deadfiles.each do | deadfile |
-    puts "removing file #{deadfile}" if verbose
-    File.unlink(deadfile)
-  end
 end
