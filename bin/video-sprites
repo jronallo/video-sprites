@@ -59,7 +59,14 @@ files.each do | file |
   extension = File.extname(file)
   basename =  File.basename(file, extension)
   puts "Basename is: #{basename}" if verbose
-  output_path = File.join(output_directory, basename)
+
+  output_path = File.basename(output_directory, basename)
+  FileUtils.mkdir_p(output_path)
+
+  if File.directory?(input)
+    output_path = File.join(output_directory, basename, basename)
+  end
+
   `ffmpeg -i "#{file}" -f image2 -vf fps=fps=1/#{frames} "#{output_path}-%05d.jpg"`
 
 end
