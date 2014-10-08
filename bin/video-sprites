@@ -60,10 +60,10 @@ files.each do | file |
   basename =  File.basename(file, extension)
   puts "Basename is: #{basename}" if verbose
 
-  output_path = File.basename(output_directory, basename)
-  FileUtils.mkdir_p(output_path)
+  output_path = File.join(output_directory, basename)
 
   if File.directory?(input)
+    FileUtils.mkdir_p(output_path)
     output_path = File.join(output_directory, basename, basename)
   end
 
