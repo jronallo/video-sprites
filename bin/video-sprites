@@ -125,8 +125,6 @@ files.each do | file |
   jpegs = Dir.glob(output_file_path + '*.jpg').sort
   FileUtils.rm(jpegs.first)
   jpegs.shift
-  binding.pry
-
 
   montage_cmd = %Q|montage "#{output_file_path}*jpg" -tile #{columns}x -geometry #{width}x "#{output_file_path}-sprite.jpg"|
   puts montage_cmd if verbose
