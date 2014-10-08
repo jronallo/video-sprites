@@ -1,6 +1,6 @@
 # Video::Sprites
 
-Exports thumbnail images, thumbnail sprite image, and WebVTT metadata. ffmpeg and ImageMagick are required.
+Exports thumbnail images, thumbnail sprite image, and WebVTT metadata.
 
 ## Installation
 
