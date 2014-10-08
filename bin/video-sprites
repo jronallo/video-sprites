@@ -43,12 +43,6 @@ else
   files = [input]
 end
 
-if opts[:frames]
-  frames = opts[:frames]
-else
-  frames = 5
-end
-
 if opts[:output]
   output_directory = File.expand_path(opts[:output])
 else
