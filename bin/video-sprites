@@ -62,6 +62,8 @@ files.each do | file |
     output_path = File.join(output_directory, basename, basename)
   end
 
+  # FIXME: check if the files exist already and maybe don't process anything
+
   `ffmpeg -i "#{file}" -f image2 -vf fps=fps=1/#{opts[:frames]} "#{output_path}-%05d.jpg"`
 
 end
