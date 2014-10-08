@@ -31,3 +31,6 @@ Output: Output directory. (Default: Current working directory with "output" dire
 video-sprites --interval 5 --width 200 --columns 5 --keepgenerated --input . --output ./output
 ```
 
+# TODO
+
+- Consider adding an option to change the output filename
