@@ -103,11 +103,11 @@ files.each do | file |
 
   # FIXME: check if the files exist already and maybe don't process anything
 
-  ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -f image2 -vf fps=fps=1/#{frames} "#{output_path}-%05d.jpg"|
+  ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -f image2 -vf fps=fps=1/#{frames} "#{output_file_path}-%05d.jpg"|
   puts ffmpeg_cmd if verbose
   `#{ffmpeg_cmd}`
 
-  montage_cmd = %Q|montage "#{output_path}*jpg" -tile #{columns}x -geometry #{width}x "#{output_path}-sprite.jpg"|
+  montage_cmd = %Q|montage "#{output_path}*jpg" -tile #{columns}x -geometry #{width}x "#{output_file_path}-sprite.jpg"|
   puts montage_cmd if verbose
 
   `#{montage_cmd}`
