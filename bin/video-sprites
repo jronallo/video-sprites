@@ -4,6 +4,16 @@ require 'slop'
 require 'fileutils'
 require 'pry'
 
+def remove_files(output_directory, verbose)
+  deadfiles = Dir.glob(File.join(output_directory, '*.jpg'))
+  puts "list of dead files will be #{deadfiles}" if verbose
+  deadfiles.each do | deadfile |
+    puts "removing file #{deadfile}" if verbose
+    File.unlink(deadfile)
+  end
+end
+
+
 opts = Slop.new strict: true do
 banner 'Usage: video-sprites [options]'
 
