@@ -10,22 +10,19 @@ Add this line to your application's Gemfile:
 gem 'video-sprites'
 ```
 
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install video-sprites
-
 ## Usage
 
-TODO: Write usage instructions here
+### Options
 
-## Contributing
+Interval: Optional. Time between the snapshots. (Default 5 seconds.)
+Width:  Optional. Width of the each thumbnail. (Default 200.)
+Columns: Number of columns in the sprite. (Default 5.)
+KeepGenerated: Keep all the individual images and other intermediate artifacts.
+Input: Input file or directory. (Default: Current working directory.)
+Output: Output directory. (Default: Current working directory with "output" directory.)
 
-1. Fork it ( https://github.com/[my-github-username]/video-sprites/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+
+```shell
+video-sprites --interval 5 --width 200 --columns 5 --keepgenerated --input . --output ./output
+```
+
