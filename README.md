@@ -26,6 +26,8 @@ Input: Input file or directory. (Default: Current working directory.)
 
 Output: Output directory. (Default: Current working directory with "output" directory.)
 
+URL base: base URL to use for 
+
 
 ```shell
 video-sprites --interval 5 --width 200 --columns 5 --keepgenerated --input . --output ./output

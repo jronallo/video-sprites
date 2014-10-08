@@ -85,6 +85,21 @@ files.each do | file |
     puts "Processing a WebVTT file from these images:"
     puts jpegs
   end
+  # place all the cues into an array of hashes like this:
+  # {start: 0, end: 5, x: 0, y: 0, w: 200, h: 150}
+  cues = []
+
+  jpegs.each_with_index do |image, index|
+    cue = {}
+    cue[:start] =
+    cue[:end] =
+    cue[:x] =
+    cue[:y] =
+    cue[:w] =
+    cue[:h] =
+  end
+
+  # media fragment order: x,y,w,h
 
 end
 
