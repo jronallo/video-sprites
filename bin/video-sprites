@@ -103,6 +103,11 @@ files.each do | file |
 
   # FIXME: check if the files exist already and maybe don't process anything
 
+  #ffprobe_cmd = %Q|ffprobe -i test/videos/FrameCounter30fps-30sec.mp4 2>&1 | sed -n "s/.*, \(.*\) fp.*/\1/p"|
+  #puts ffprobe_cmd if verbose
+  #frames_per_sec=`#{ffprobe_cmd}`.to_i
+
+
   ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -f image2 -vf fps=fps=1/#{frames} "#{output_file_path}-%05d.jpg"|
   puts ffmpeg_cmd if verbose
   `#{ffmpeg_cmd}`
@@ -174,7 +179,7 @@ files.each do | file |
 end
 
 def remove_files(output_directory, verbose)
-  deadfiles = Dir.glob(File.join(output_directory, '*.jpg'))
+  deadfiles = Dir.glob(File.join(output_directory, '**', '*.jpg'))
   puts "list of dead files will be #{deadfiles}" if verbose
   deadfiles.each do | deadfile |
     puts "removing file #{deadfile}" if verbose
