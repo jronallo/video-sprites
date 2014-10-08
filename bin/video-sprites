@@ -11,6 +11,12 @@ def remove_files(output_directory, verbose)
     puts "removing file #{deadfile}" if verbose
     File.unlink(deadfile)
   end
+  deadfiles = Dir.glob(File.join(output_directory, '**', '*.vtt'))
+  puts "list of dead files will be #{deadfiles}" if verbose
+  deadfiles.each do | deadfile |
+    puts "removing file #{deadfile}" if verbose
+    File.unlink(deadfile)
+  end
 end
 
 
@@ -125,8 +131,6 @@ files.each do | file |
   jpegs = Dir.glob(output_file_path + '*.jpg').sort
   FileUtils.rm(jpegs.first)
   jpegs.shift
-  binding.pry
-
 
   montage_cmd = %Q|montage "#{output_file_path}*jpg" -tile #{columns}x -geometry #{width}x "#{output_file_path}-sprite.jpg"|
   puts montage_cmd if verbose
