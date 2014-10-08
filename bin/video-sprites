@@ -10,11 +10,13 @@ opts = Slop.new strict: true do
   on 'w', 'width', 'Width of each thumbnail', argument: :optional
   on 'c', 'columns', 'Number of columns in the image sprite', argument: :optional
   on 'k', 'keep', 'Keep all the individual images and other intermediate artifacts.', argument: :optional
-  on 'i', 'input', 'Input file or directory'
+  on 'i', 'input', 'Input file or directory', required: true
   on 'o', 'output', 'Output file or directory', argument: :optional
   on 'v', 'verbose', 'Enable verbose mode'
   on 'h', 'help', 'Help!!!'
 end
+
+
 
 begin
   opts.parse
