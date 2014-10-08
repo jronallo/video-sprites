@@ -11,6 +11,12 @@ def remove_files(output_directory, verbose)
     puts "removing file #{deadfile}" if verbose
     File.unlink(deadfile)
   end
+  deadfiles = Dir.glob(File.join(output_directory, '**', '*.vtt'))
+  puts "list of dead files will be #{deadfiles}" if verbose
+  deadfiles.each do | deadfile |
+    puts "removing file #{deadfile}" if verbose
+    File.unlink(deadfile)
+  end
 end
 
 
