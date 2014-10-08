@@ -9,7 +9,7 @@ opts = Slop.new strict: true do
 
   on 'f', 'frames=', 'An optional password', argument: :optional, as: Integer, default: 5
   on 'w', 'width=', 'Width of each thumbnail', argument: :optional, as: Integer, default: 200
-  on 'c', 'columns=', 'Number of columns in the image sprite', argument: :optional, as: Integer, default: 4
+  on 'c', 'columns=', 'Number of columns in the image sprite', argument: :optional, as: Integer, default: 5
   on 'k', 'keep', 'Keep all the individual images and other intermediate artifacts.', argument: :optional
   on 'i', 'input=', 'Input file or directory', required: true
   on 'o', 'output=', 'Output file or directory', argument: :optional
@@ -64,7 +64,14 @@ files.each do | file |
 
   # FIXME: check if the files exist already and maybe don't process anything
 
-  `ffmpeg -i "#{file}" -f image2 -vf fps=fps=1/#{opts[:frames]} "#{output_path}-%05d.jpg"`
+  ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -f image2 -vf fps=fps=1/#{opts[:frames]} "#{output_path}-%05d.jpg"|
+  puts ffmpeg_cmd if verbose
+  `#{ffmpeg_cmd}`
+
+  montage_cmd = %Q|montage #{output_path}*jpg -tile #{opts[:columns]}x -geometry #{opts[:width]}x #{output_path}-sprite.jpg|
+  puts montage_cmd if verbose
+
+  `#{montage_cmd}`
 
 end
 
