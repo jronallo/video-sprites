@@ -1,6 +1,6 @@
 # Video::Sprites
 
-TODO: Write a gem description
+Automatically generated thumbnail for video files.
 
 ## Installation
 
