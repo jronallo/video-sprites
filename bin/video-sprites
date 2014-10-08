@@ -89,6 +89,12 @@ else
 end
 
 files.each do | file |
+
+  # for repeated runs, skip any directories in this directory
+  if File.directory?(file)
+    next
+  end
+
   puts "Processing file: #{file}" if verbose
   extension = File.extname(file)
   basename =  File.basename(file, extension)
@@ -118,6 +124,7 @@ files.each do | file |
 
   jpegs = Dir.glob(output_file_path + '*.jpg').sort
   FileUtils.rm(jpegs.first)
+  jpegs.shift
 
   montage_cmd = %Q|montage "#{output_file_path}*jpg" -tile #{columns}x -geometry #{width}x "#{output_file_path}-sprite.jpg"|
   puts montage_cmd if verbose
