@@ -60,3 +60,10 @@ https://www.youtube.com/watch?v=wz-eInv9f7g
 - Consider adding an option to change the output filename.
 - Optionally allow for scene change detection and variable length cues. How difficult would this be?
 - Rename frames option to something that does a better job of communicating that a snapshot will be taken every so many seconds based on this value. "Frames" doesn't seem like the right word for this.
+
+## Authors
+
+- Ashley Blewer
+- Jay Brown 
+- Jason Ronallo
+- Nicholas Zoss
