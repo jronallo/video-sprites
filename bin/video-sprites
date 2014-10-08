@@ -4,6 +4,7 @@ require 'slop'
 require 'fileutils'
 require 'pry'
 
+# remove all JPEG and VTT files, but leave the directories in place.
 def remove_files(output_directory, verbose)
   deadfiles = Dir.glob(File.join(output_directory, '**', '*.jpg'))
   puts "list of dead files will be #{deadfiles}" if verbose
@@ -19,6 +20,14 @@ def remove_files(output_directory, verbose)
   end
 end
 
+# Format a WebVTT timestamp according to the specification using hours, minutes, seconds, and fractional seconds.
+def timestamp(total_seconds)
+  seconds = total_seconds % 60
+  minutes = (total_seconds / 60) % 60
+  hours = total_seconds / (60 * 60)
+
+  format("%02d:%02d:%02d.000", hours, minutes, seconds)
+end
 
 opts = Slop.new strict: true do
   banner 'Usage: video-sprites [options]'
@@ -33,15 +42,6 @@ opts = Slop.new strict: true do
   on 'z', 'clean', 'Clean up the output directory'
   on 'h', 'help', 'Help!!!'
 end
-
-def timestamp(total_seconds)
-  seconds = total_seconds % 60
-  minutes = (total_seconds / 60) % 60
-  hours = total_seconds / (60 * 60)
-
-  format("%02d:%02d:%02d.000", hours, minutes, seconds)
-end
-
 
 begin
   opts.parse
@@ -68,12 +68,16 @@ if verbose
 end
 
 if File.directory?(input)
+  # TODO: Only pull in video files with this. What's the best way to do that?
+  # Should we test for whether a file is a video file or use something potentially more
+  # fragile like testing for extensions?
   files = Dir.glob(File.join(input, '*'))
 else
   files = [input]
 end
 
-
+# Since we allow for input to be either a file or a directory we need to set file paths
+# for use later appropriately.
 if output
   output_directory = File.expand_path(output)
   puts "output dir is #{output_directory}" if verbose
@@ -94,6 +98,7 @@ else
   end
 end
 
+# This is the main loop where we go through video files.
 files.each do | file |
 
   # for repeated runs, skip any directories in this directory
@@ -118,27 +123,34 @@ files.each do | file |
   puts "#{output_file_path} output file path"
   # FIXME: check if the files exist already and maybe don't process anything
 
+  # Use ffprobe to discover the frames per second.
   ffprobe_cmd = 'ffprobe -i "' + "#{file}" +  '" 2>&1 | sed -n "s/.*, \(.*\) fp.*/\1/p"'
   puts ffprobe_cmd if verbose
+  # Frames per second can be fractional so round up
   frames_per_sec=`#{ffprobe_cmd}`.to_f.ceil.to_i
   frames_value=frames_per_sec*frames
   puts "frames_per_sec #{frames_per_sec}, frames_value #{frames_value}" if verbose
 
+  # Using select allows for more exact selection of a frame at the times we want
   ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -vf select='lt(mod(n\\,#{frames_value})\\,1),fps=1/#{frames}' "#{output_file_path}-%05d.jpg"|
   puts ffmpeg_cmd if verbose
   `#{ffmpeg_cmd}`
 
+  # We drop the first snapshot because it is the first frame which will either be useless or already in our poster
+  # image for the video. This also allows the WebVTT to show the thumbnail of a frame that will come some time after
+  # the time selected/clicked on.
   jpegs = Dir.glob(output_file_path + '*.jpg').sort
   FileUtils.rm(jpegs.first)
   jpegs.shift
 
+  # Montage concatenates all the images into an image sprite.
+  # TODO: Instead of creating a single sprite take a slice of the output jpegs and create a number of different
+  # sprites.
   montage_cmd = %Q|montage "#{output_file_path}*jpg" -tile #{columns}x -geometry #{width}x "#{output_file_path}-sprite.jpg"|
   puts montage_cmd if verbose
-
   `#{montage_cmd}`
 
-  # Create WebVTT file
-
+  # Prepare to create WebVTT file
   if verbose
     puts 'Processing a WebVTT file from these images:'
     puts jpegs
@@ -146,10 +158,13 @@ files.each do | file |
   # place all the cues into an array of hashes like this:
   # {start: 0, end: 5, x: 0, y: 0, w: 200, h: 150}
   cues = []
-
   start = 0
+
+  # Use the first jpeg to determine the height of the resulting thumbs. We already know the width from the
+  # passed in option or the default width.
   first_jpeg = jpegs.first
   height = `identify -format "%h" -ping #{first_jpeg}`.to_i
+  # For each jpeg create a cue
   jpegs.each_with_index do |image, index|
     puts "Index: #{index}" if verbose
     cue = {}
@@ -174,6 +189,8 @@ files.each do | file |
 
   puts cues if verbose
 
+  # Create a WebVTT file.
+  # TODO: When multiple sprites are created use the correct filename for each sprite.
   # media fragment order: x,y,w,h
   webvtt_file_name = output_file_path + '.vtt'
   puts "Creating WebVTT: #{webvtt_file_name}" if verbose
