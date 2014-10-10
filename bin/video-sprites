@@ -48,6 +48,7 @@ begin
 rescue Slop::Error => e
   puts e.message
   puts opts # print help
+  exit
 end
 
 verbose = opts[:verbose]
