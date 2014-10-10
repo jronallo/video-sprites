@@ -43,6 +43,7 @@ opts = Slop.new strict: true do
   on 't', 'start', 'Start time to begin from in seconds or hh:mm:ss[.xxx]', argument: :optional
   on 'd', 'duration', 'Duration of the clip to extract stills from in seconds or hh:mm:ss[.xxx] and can only be set if --start is also set.', argument: :optional
   on 'h', 'help', 'Help!!!'
+  on 'u', 'url=', "Base url to use for webvtt", required: true, default: 'http://example.com'
 end
 
 begin
@@ -175,7 +176,12 @@ files.each do | file |
   # Use the first jpeg to determine the height of the resulting thumbs. We already know the width from the
   # passed in option or the default width.
   first_jpeg = jpegs.first
-  height = `identify -format "%h" -ping #{first_jpeg}`.to_i
+
+  original_height = `identify -format "%h" -ping #{first_jpeg}`
+  original_width = `identify -format "%w" -ping #{first_jpeg}`
+  height = (original_height.to_f / original_width.to_f * width).to_i
+
+
   # For each jpeg create a cue
   jpegs.each_with_index do |image, index|
     puts "Index: #{index}" if verbose
@@ -217,7 +223,7 @@ files.each do | file |
       fh.print ' --> '
       fh.puts end_timestamp
 
-      url = File.join("http://example.com", basename + "-sprite.jpg#xywh=#{cue[:x]},#{cue[:y]},#{cue[:w]},#{cue[:h]}")
+      url = File.join(opts[:url], basename + "-sprite.jpg#xywh=#{cue[:x]},#{cue[:y]},#{cue[:w]},#{cue[:h]}")
 
       fh.puts url
       fh.puts
