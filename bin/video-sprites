@@ -217,7 +217,7 @@ files.each do | file |
       fh.print ' --> '
       fh.puts end_timestamp
 
-      url = File.join("http://example.com", basename + "sprite.jpg#xywh=#{cue[:x]},#{cue[:y]},#{cue[:w]},#{cue[:h]}")
+      url = File.join("http://example.com", basename + "-sprite.jpg#xywh=#{cue[:x]},#{cue[:y]},#{cue[:w]},#{cue[:h]}")
 
       fh.puts url
       fh.puts
