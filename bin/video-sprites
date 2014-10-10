@@ -32,7 +32,7 @@ end
 opts = Slop.new strict: true do
   banner 'Usage: video-sprites [options]'
 
-  on 's', 'seconds=', 'Seconds interval between snapshots', argument: :optional, as: Float, default: 5.0
+  on 's', 'seconds=', 'Seconds interval between snapshots', argument: :optional, as: Integer, default: 5
   on 'w', 'width=', 'Width of each thumbnail', argument: :optional, as: Integer, default: 200
   on 'c', 'columns=', 'Number of columns in the image sprite', argument: :optional, as: Integer, default: 5
   on 'k', 'keep', 'Keep all the individual images and other intermediate artifacts.', argument: :optional
