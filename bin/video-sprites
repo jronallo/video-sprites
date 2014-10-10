@@ -84,8 +84,10 @@ if output
   puts "output dir is #{output_directory}" if verbose
   if File.directory?(output_directory)
     remove_files(output_directory, verbose) if clean
-  else
+  elsif File.exist?(output_directory)
     raise "Output directory must be a directory, was: #{output}"
+  else
+    FileUtils.mkdir_p(output_directory)
   end
 else
   output_directory = input
