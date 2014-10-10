@@ -43,7 +43,7 @@ opts = Slop.new strict: true do
   on 't', 'start', 'Start time to begin from in seconds or hh:mm:ss[.xxx]', argument: :optional
   on 'd', 'duration', 'Duration of the clip to extract stills from in seconds or hh:mm:ss[.xxx] and can only be set if --start is also set.', argument: :optional
   on 'h', 'help', 'Help!!!'
-  on 'u', 'url=', "Base url to use for webvtt", required: true, default: 'http://example.com'
+  on 'u', 'url=', "Base url to use for webvtt", default: 'http://example.com'
 end
 
 begin
