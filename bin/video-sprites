@@ -32,7 +32,7 @@ end
 opts = Slop.new strict: true do
   banner 'Usage: video-sprites [options]'
 
-  on 'f', 'frames=', 'An optional password', argument: :optional, as: Integer, default: 5
+  on 's', 'seconds=', 'Seconds interval between snapshots', argument: :optional, as: Float, default: 5.0
   on 'w', 'width=', 'Width of each thumbnail', argument: :optional, as: Integer, default: 200
   on 'c', 'columns=', 'Number of columns in the image sprite', argument: :optional, as: Integer, default: 5
   on 'k', 'keep', 'Keep all the individual images and other intermediate artifacts.', argument: :optional
@@ -40,6 +40,8 @@ opts = Slop.new strict: true do
   on 'o', 'output=', 'Output file or directory', argument: :optional
   on 'v', 'verbose', 'Enable verbose mode'
   on 'z', 'clean', 'Clean up the output directory'
+  on 't', 'start', 'Start time to begin from in seconds or hh:mm:ss[.xxx]', argument: :optional
+  on 'd', 'duration', 'Duration of the clip to extract stills from in seconds or hh:mm:ss[.xxx] and can only be set if --start is also set.', argument: :optional
   on 'h', 'help', 'Help!!!'
 end
 
@@ -54,7 +56,7 @@ end
 verbose = opts[:verbose]
 input   = File.expand_path(opts[:input])
 output  = opts[:output]
-frames  = opts[:frames]
+seconds  = opts[:seconds]
 columns = opts[:columns]
 width   = opts[:width]
 clean   = opts[:clean]
@@ -131,11 +133,18 @@ files.each do | file |
   puts ffprobe_cmd if verbose
   # Frames per second can be fractional so round up
   frames_per_sec=`#{ffprobe_cmd}`.to_f.ceil.to_i
-  frames_value=frames_per_sec*frames
+  frames_value=frames_per_sec * seconds
   puts "frames_per_sec #{frames_per_sec}, frames_value #{frames_value}" if verbose
 
   # Using select allows for more exact selection of a frame at the times we want
-  ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -vf select='lt(mod(n\\,#{frames_value})\\,1),fps=1/#{frames}' "#{output_file_path}-%05d.jpg"|
+  ffmpeg_cmd = %Q|ffmpeg -i "#{file}" -vf select='lt(mod(n\\,#{frames_value})\\,1),fps=1/#{seconds}' |
+  if opts[:start]
+    ffmpeg_cmd += " -ss #{opts[:start]} "
+    if opts[:duration]
+      ffmpeg_cmd += " -t #{opts[:duration]} "
+    end
+  end
+  ffmpeg_cmd += %Q| "#{output_file_path}-%05d.jpg" |
   puts ffmpeg_cmd if verbose
   `#{ffmpeg_cmd}`
 
@@ -173,7 +182,7 @@ files.each do | file |
     cue = {}
 
     cue[:start] = start
-    cue[:end] = start + opts[:frames]
+    cue[:end] = start + opts[:seconds]
 
     cue[:x] = ((index % opts[:columns]) * opts[:width])
     puts "x #{cue[:x]}" if verbose
@@ -184,7 +193,7 @@ files.each do | file |
     cue[:w] = opts[:width]
     cue[:h] = height
 
-    start += opts[:frames]
+    start += opts[:seconds]
     puts if verbose
 
     cues << cue
