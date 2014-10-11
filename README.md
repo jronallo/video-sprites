@@ -1,10 +1,8 @@
-# Video::Sprites
+# Video Sprites
 
-Exports thumbnail images, thumbnail sprite image, and WebVTT metadata.
+Exports thumbnail images, thumbnail sprite image, and a WebVTT metadata file with synced media fragment URLs to thumbnails within the sprite. 
 
 ## Installation
-
-Add this line to your application's Gemfile:
 
 ```ruby
 gem 'video-sprites'
@@ -17,22 +15,35 @@ gem 'video-sprites'
 
 ## Usage
 
-### Options
-
-* -f for frames. Optional. Time between the snapshots. (Default 5 seconds.)
-* -w for width. Optional. Width of the each thumbnail. (Default 200.)
-* -c for columns. Number of columns in the sprite. (Default 5.)
-* -k for keep. Keep all the individual images and other intermediate artifacts.
-* -i for input. This is the only required field. (Default: Current working directory.)
-* -o for output. Output directory. (Default: Current working directory with "output" directory.)
-* -v for verbose. Detailed comments when processing.
-* -z for clean. Optional. Clear the output directory for files named like the input file before execution. (Defaults to false)
-* -h for help. Explains each flag.
-
 ```shell
-video-sprites --interval 5 --width 200 --columns 5 --keepgenerated --input . --output ./output
+video-sprites --help
 ```
 
-# TODO
+```shell
+video-sprites --seconds 5 --width 200 --columns 5 --input . --output ./output
+```
 
-- Consider adding an option to change the output filename
+## Test Media Sources
+
+https://www.youtube.com/watch?v=dTCEDG9h9AA
+
+https://www.youtube.com/watch?v=9AGisNPUBqM
+
+https://www.youtube.com/watch?v=Z9To9NOLEPI
+
+https://www.youtube.com/watch?v=Ww4WrcjAOlo
+
+https://www.youtube.com/watch?v=wz-eInv9f7g
+
+## TODO
+
+- Consider adding an option to change the output filename.
+- Optionally allow for scene change detection and variable length cues. How difficult would this be?
+- Should the first timestamp after the first cue not be on the second but be a fractional second instead?
+
+## Authors
+
+- Ashley Blewer
+- Jay Brown 
+- Jason Ronallo
+- Nicholas Zoss
