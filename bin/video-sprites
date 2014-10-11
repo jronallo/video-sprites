@@ -45,6 +45,7 @@ opts = Slop.new strict: true do
   on 'h', 'help', 'Help!!!'
   on 'u', 'url=', "Base url to use for webvtt", default: 'http://example.com'
   on 'g', 'gif', "Create a GIF animation as well?"
+  on 'r', 'rows=', 'Maximum number of rows to put into each sprite', argument: :optional, as: Integer
 end
 
 begin
@@ -164,9 +165,17 @@ files.each do | file |
   # Montage concatenates all the images into an image sprite.
   # TODO: Instead of creating a single sprite take a slice of the output jpegs and create a number of different
   # sprites.
-  montage_cmd = %Q|montage "#{output_file_path}*jpg" -tile #{columns}x -geometry #{width}x "#{output_file_path}-sprite.jpg"|
-  puts montage_cmd if verbose
-  `#{montage_cmd}`
+  slice_size = jpegs.length
+  if opts[:rows]
+    slice_size = opts[:columns] * opts[:rows]
+  end
+  jpegs.each_slice(slice_size).with_index do | jpeg_slice, index |
+    montage_files = jpeg_slice.map{|jpeg| %Q|"#{jpeg}"|}.join(" ")
+    padded_index = (index + 1).to_s.rjust(5, "0")
+    montage_cmd = %Q|montage #{montage_files} -tile #{columns}x -geometry #{width}x "#{output_file_path}-sprite-#{padded_index}.jpg"|
+    puts montage_cmd if verbose
+    `#{montage_cmd}`
+  end
 
   # Prepare to create WebVTT file
   if verbose
@@ -182,32 +191,34 @@ files.each do | file |
   # passed in option or the default width.
   first_jpeg = jpegs.first
 
-  original_height = `identify -format "%h" -ping #{first_jpeg}`
-  original_width = `identify -format "%w" -ping #{first_jpeg}`
-  height = (original_height.to_f / original_width.to_f * width).to_i
-
+  original_height = `identify -format "%h" -ping "#{first_jpeg}"`
+  original_width = `identify -format "%w" -ping "#{first_jpeg}"`
+  processed_height = (original_height.to_f / original_width.to_f * width).to_i
+  height = processed_height
 
   # For each jpeg create a cue
-  jpegs.each_with_index do |image, index|
-    puts "Index: #{index}" if verbose
-    cue = {}
+  jpegs.each_slice(slice_size) do | jpeg_slice |
+    jpeg_slice.each_with_index do |jpeg, index|
+      puts "Index: #{index}" if verbose
+      cue = {}
 
-    cue[:start] = start
-    cue[:end] = start + opts[:seconds]
+      cue[:start] = start
+      cue[:end] = start + opts[:seconds]
 
-    cue[:x] = ((index % opts[:columns]) * opts[:width])
-    puts "x #{cue[:x]}" if verbose
+      cue[:x] = ((index % opts[:columns]) * opts[:width])
+      puts "x #{cue[:x]}" if verbose
 
-    cue[:y] = (index.to_f / opts[:columns].to_f).floor * height
-    puts "y #{cue[:y]}" if verbose
+      cue[:y] = (index.to_f / opts[:columns].to_f).floor * height
+      puts "y #{cue[:y]}" if verbose
 
-    cue[:w] = opts[:width]
-    cue[:h] = height
+      cue[:w] = opts[:width]
+      cue[:h] = height
 
-    start += opts[:seconds]
-    puts if verbose
+      start += opts[:seconds]
+      puts if verbose
 
-    cues << cue
+      cues << cue
+    end
   end
 
   puts cues if verbose
@@ -220,18 +231,22 @@ files.each do | file |
   File.open(webvtt_file_name, 'w') do |fh|
     fh.puts "WEBVTT\n\n"
 
-    cues.each do |cue|
-      puts cue if verbose
-      start_timestamp = timestamp(cue[:start])
-      end_timestamp = timestamp(cue[:end])
-      fh.print start_timestamp
-      fh.print ' --> '
-      fh.puts end_timestamp
+    cues.each_slice(slice_size).with_index do |cue_slice, index|
+      cue_slice.each do |cue|
+        puts cue if verbose
+        start_timestamp = timestamp(cue[:start])
+        end_timestamp = timestamp(cue[:end])
+        fh.print start_timestamp
+        fh.print ' --> '
+        fh.puts end_timestamp
 
-      url = File.join(opts[:url], basename + "-sprite.jpg#xywh=#{cue[:x]},#{cue[:y]},#{cue[:w]},#{cue[:h]}")
+        padded_index = (index + 1).to_s.rjust(5, "0")
 
-      fh.puts url
-      fh.puts
+        url = File.join(opts[:url], basename + "-sprite-#{padded_index}.jpg#xywh=#{cue[:x]},#{cue[:y]},#{cue[:w]},#{cue[:h]}")
+
+        fh.puts url
+        fh.puts
+      end
     end
 
   end
