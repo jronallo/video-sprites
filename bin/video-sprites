@@ -2,7 +2,6 @@
 
 require 'slop'
 require 'fileutils'
-require 'pry'
 
 # remove all JPEG and VTT files, but leave the directories in place.
 def remove_files(output_directory, verbose)
