@@ -1,6 +1,6 @@
 # Video Sprites
 
-Exports thumbnail images, thumbnail sprite image, and WebVTT metadata. 
+Exports thumbnail images, thumbnail sprite image, and a WebVTT metadata file with synced media fragment URLs to thumbnails within the sprite. 
 
 ## Installation
 
