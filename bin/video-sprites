@@ -31,21 +31,20 @@ end
 
 opts = Slop.new strict: true do
   banner 'Usage: video-sprites [options]'
-
+  on 'i', 'input=', 'Input file or directory', required: true
+  on 'o', 'output=', 'Output file or directory', argument: :optional
   on 's', 'seconds=', 'Seconds interval between snapshots', argument: :optional, as: Integer, default: 5
   on 'w', 'width=', 'Width of each thumbnail', argument: :optional, as: Integer, default: 200
   on 'c', 'columns=', 'Number of columns in the image sprite', argument: :optional, as: Integer, default: 5
-  on 'k', 'keep', 'Keep all the individual images and other intermediate artifacts.', argument: :optional
-  on 'i', 'input=', 'Input file or directory', required: true
-  on 'o', 'output=', 'Output file or directory', argument: :optional
-  on 'v', 'verbose', 'Enable verbose mode'
-  on 'z', 'clean', 'Clean up the output directory'
+  on 'r', 'rows=', 'Maximum number of rows to put into each sprite', argument: :optional, as: Integer
+  # on 'k', 'keep', 'Keep all the individual images and other intermediate artifacts.', argument: :optional
   on 't', 'start', 'Start time to begin from in seconds or hh:mm:ss[.xxx]', argument: :optional
   on 'd', 'duration', 'Duration of the clip to extract stills from in seconds or hh:mm:ss[.xxx] and can only be set if --start is also set.', argument: :optional
-  on 'h', 'help', 'Help!!!'
   on 'u', 'url=', "Base url to use for webvtt", default: 'http://example.com'
   on 'g', 'gif', "Create a GIF animation as well?"
-  on 'r', 'rows=', 'Maximum number of rows to put into each sprite', argument: :optional, as: Integer
+  on 'v', 'verbose', 'Enable verbose mode'
+  on 'z', 'clean', 'Clean up the output directory'
+  on 'h', 'help', 'Help!!!'
 end
 
 begin

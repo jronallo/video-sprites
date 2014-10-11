@@ -1,16 +1,12 @@
-# Video::Sprites
+# Video Sprites
 
-Exports thumbnail images, thumbnail sprite image, and WebVTT metadata. ffmpeg and ImageMagick are required.
+Exports thumbnail images, thumbnail sprite image, and WebVTT metadata. 
 
 ## Installation
-
-Add this line to your application's Gemfile:
 
 ```ruby
 gem 'video-sprites'
 ```
-A complete, cross-platform solution to record, convert and stream audio and video.
-
 
 ## Requirements
 
@@ -19,26 +15,12 @@ A complete, cross-platform solution to record, convert and stream audio and vide
 
 ## Usage
 
-### Options
-
-Frames: Optional. Time between the snapshots. (Default 5 seconds.)
-
-Width:  Optional. Width of the each thumbnail. (Default 200.)
-
-Columns: Number of columns in the sprite. (Default 5.)
-
-Keep: Keep all the individual images and other intermediate artifacts.
-
-Input: Input file or directory. (Default: Current working directory.)
-
-Output: Output directory. (Default: Current working directory with "output" directory.)
-
-URL base: base URL to use for
-
-Clean: Optional. Clear the output directory for files named like the input file before execution. (Defaults to false)
+```shell
+video-sprites --help
+```
 
 ```shell
-video-sprites --interval 5 --width 200 --columns 5 --keepgenerated --input . --output ./output
+video-sprites --seconds 5 --width 200 --columns 5 --input . --output ./output
 ```
 
 ## Test Media Sources
@@ -55,8 +37,6 @@ https://www.youtube.com/watch?v=wz-eInv9f7g
 
 ## TODO
 
-- Instead of creating one sprite, create multiple sprites and have them appropriately listed in the WebVTT file.
-- Allow for setting the base URL to use in the VTT file.
 - Consider adding an option to change the output filename.
 - Optionally allow for scene change detection and variable length cues. How difficult would this be?
 - Should the first timestamp after the first cue not be on the second but be a fractional second instead?
