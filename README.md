@@ -5,7 +5,7 @@ Exports thumbnail images, thumbnail sprite image, and a WebVTT metadata file wit
 ## Installation
 
 ```ruby
-gem 'video-sprites'
+gem install 'video-sprites'
 ```
 
 ## Requirements
