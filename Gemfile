@@ -5,3 +5,4 @@ gemspec
 
 'slop'
 'rspec'
+'aruba'
