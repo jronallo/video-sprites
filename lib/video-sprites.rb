@@ -30,7 +30,7 @@ module VideoSprites
     format("%02d:%02d:%02d.000", hours, minutes, seconds)
   end
 
-  opts = Slop.new strict: true do
+  opts = Slop.new(strict: true, help: true) do
     banner 'Usage: video-sprites [options]'
     on 'i', 'input=', 'Input file or directory', required: true
     on 'o', 'output=', 'Output file or directory', argument: :optional
@@ -45,14 +45,13 @@ module VideoSprites
     on 'g', 'gif', "Create a GIF animation as well?"
     on 'v', 'verbose', 'Enable verbose mode'
     on 'z', 'clean', 'Clean up the output directory'
-    on 'h', 'help', 'Help!!!'
   end
 
   begin
     opts.parse
   rescue Slop::Error => e
     puts e.message
-    puts opts # print help
+    puts opts
     exit
   end
 
