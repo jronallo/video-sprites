@@ -9,4 +9,9 @@ describe "input parameters" do
     expect(stdout_from("video-sprites no input")).to start_with("Missing required option(s): input")
   end
 
+  it "does not raise missing option flag on help" do
+    run_simple "video-sprites --help"
+    expect(stdout_from("video-sprites --help")).to_not start_with("Missing required option(s): input")
+  end
+
 end
