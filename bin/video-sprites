@@ -72,7 +72,7 @@ if verbose
 end
 
 if File.directory?(input)
-  files = Dir.glob(File.join(input, '*.{avi,flv,mkv,mov,mp4}'))
+  files = Dir.glob(File.join(input, '*.{avi,drc,flv,mkv,mov,mpg,mp2,mpeg,mpe,mpv,mp4,m4a,m4p,m4v,mxf,ogg,ogv,webm}'))
 else
   files = [input]
 end
