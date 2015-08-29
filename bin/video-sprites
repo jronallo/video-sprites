@@ -72,10 +72,7 @@ if verbose
 end
 
 if File.directory?(input)
-  # TODO: Only pull in video files with this. What's the best way to do that?
-  # Should we test for whether a file is a video file or use something potentially more
-  # fragile like testing for extensions?
-  files = Dir.glob(File.join(input, '*'))
+  files = Dir.glob(File.join(input, '*.{avi,flv,mkv,mov,mp4}'))
 else
   files = [input]
 end
