@@ -173,7 +173,6 @@ module VideoSprites
       `#{montage_cmd}`
     end
 
-    # Prepare to create WebVTT file
     if verbose
       puts 'Processing a WebVTT file from these images:'
       puts jpegs
@@ -219,7 +218,6 @@ module VideoSprites
 
     puts cues if verbose
 
-    # Create a WebVTT file.
     # TODO: When multiple sprites are created use the correct filename for each sprite.
     # media fragment order: x,y,w,h
     webvtt_file_name = output_file_path + '-sprite.vtt'
