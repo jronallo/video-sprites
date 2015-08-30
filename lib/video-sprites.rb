@@ -6,7 +6,7 @@ module VideoSprites
   require 'fileutils'
 
   # remove all JPEG and VTT files, but leave the directories in place.
-  def remove_files(output_directory, verbose)
+  def self.remove_files(output_directory, verbose)
     deadfiles = Dir.glob(File.join(output_directory, '**', '*.jpg'))
     puts "list of dead files will be #{deadfiles}" if verbose
     deadfiles.each do | deadfile |
@@ -22,7 +22,7 @@ module VideoSprites
   end
 
   # Format a WebVTT timestamp according to the specification using hours, minutes, seconds, and fractional seconds.
-  def timestamp(total_seconds)
+  def self.timestamp(total_seconds)
     seconds = total_seconds % 60
     minutes = (total_seconds / 60) % 60
     hours = total_seconds / (60 * 60)
