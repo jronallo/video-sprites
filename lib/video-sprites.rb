@@ -125,7 +125,14 @@ module VideoSprites
     end
 
     puts "#{output_file_path} output file path"
-    # FIXME: check if the files exist already and maybe don't process anything
+
+    if File.exist?(file)
+      puts "Output file path already exists. Do you want to overwrite? (y/n)"
+      overwrite = STDIN.gets.chomp
+      if overwrite == "n"
+        break
+      end
+    end
 
     # Use ffprobe to discover the frames per second.
     ffprobe_cmd = 'ffprobe -i "' + "#{file}" +  '" 2>&1 | sed -n "s/.*, \(.*\) fp.*/\1/p"'
